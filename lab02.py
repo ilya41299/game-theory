@@ -27,7 +27,7 @@ def saddle_point(matrix):
     return -1, -1, -1
 
 
-def huita():
+def compute():
     N = 2
     while N <= 10:
         matrix = kernel(N)
@@ -41,7 +41,7 @@ def huita():
         N+=1
 
 
-huita()
+compute()
 
 
 
