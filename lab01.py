@@ -1,6 +1,7 @@
 import numpy
 import numpy as np
 from prettytable import PrettyTable
+import matplotlib.pyplot as plt
 
 C = numpy.array(
     [
@@ -48,13 +49,9 @@ def new_win_and_loss(matrix_C, win_A, loss_B, k, strategies):
 
 
 def print_table(strategies, win_A, loss_B, max_win, min_loss, e):
-
-
-
-
     table = PrettyTable(
         ["k", "Выбор А", "Выбор B", "Выигрыш А", "Проигрыш В", "k_max", "k_min", "e"],
-        float_format="0.5",
+        float_format="0.3",
     )
     for k in range(len(strategies)):
         table.add_row(
@@ -101,17 +98,32 @@ def braun_robinson(matrix_C):
         y.append([row[1] for row in strategies].count(s))
     x = [round(el / len(strategies), 3) for el in x]
     y = [round(el / len(strategies), 3) for el in y]
-#    print(x, y)
-#    print('Best for A ', np.argmax(x), ' Best for B ', np.argmax(y))
+    v = (min(max_win) + max(min_loss)) / 2
 
-    return np.argmax(x), np.argmax(y), strategies, win_A, loss_B, max_win, min_loss, e
+    return np.argmax(x), np.argmax(y), strategies, win_A, loss_B, max_win, min_loss, e, x, y, v
 
 
 if __name__ == "__main__":
-    analysis_method(test_C)
-    best_a, best_b, strategies, win_A, loss_B, max_win, min_loss, e = braun_robinson(test_C)
-    print_table(strategies, win_A, loss_B, max_win, min_loss, e)
+    print("Аналитическое решение:")
+    analysis_method(C)
+    best_a, best_b, strategies, win_A, loss_B, max_win, min_loss, e, x, y, v = braun_robinson(C)
+    # округлить значения до тысячных + вывести вероятности
+    print("Численное решение")
+    print(f"x: {x}\ny: {y}")
+    print(f"v: {round(v, 3)}")
 
+    print_table(strategies, win_A, loss_B, max_win, min_loss, e)
+    plt.title("Метод Брауна-Робинсон")  # заголовок
+    plt.xlabel("k")  # ось абсцисс
+    # plt.ylabel("y")  # ось ординат
+    plt.grid()  # включение отображение сетки
+    os = list(range(1, len(e) + 1))
+    plt.plot(e, color='r', label="e")
+    plt.plot(max_win, color='g', label="Верхняя оценка цены игры")
+    plt.plot(min_loss, color='b', label="Нижняя оценка цены игры")
+    plt.legend()
+    # plt.plot(os, e)  # построение графика
+    plt.show()
 
 # x, y = [], []
 #     for s in range(len(matrix_C)):
