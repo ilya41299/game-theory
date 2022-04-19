@@ -4,8 +4,9 @@ import random
 import graphviz
 from graphviz import Source
 
-DEPTH = 3
+DEPTH = 5
 num = 0
+format = 'pdf'
 
 
 def create_subtree(current_depth, i):
@@ -32,6 +33,7 @@ def create_subtree(current_depth, i):
 
 def find_path(tree: Tree):
     current_depth = tree.depth() - 1
+    copy_tree = Tree(tree)
 
     slice_tree = list(filter(lambda x: tree.level(x.identifier) == current_depth, tree.all_nodes()))
     while (current_depth != -1):
@@ -49,12 +51,16 @@ def find_path(tree: Tree):
             for child in children:
                 if child.data[0][gamer] < max_win:
                     tree.remove_subtree(child.identifier)
+                else:
+                    copy_tree.get_node(v.identifier).tag += f"\n{str([child.data[0]])}"
             v.data = [child.data[0] for child in tree.children(v.identifier)]
-            # МОЖНО НА КАЖДОМ ШАГЕ ДОБАВЛЯТЬ К ТЕГУ ВЫИГРЫШИ!!! А НЕ УДАЛЯТЬ ПОДДЕРЕВО НО ТОГДА НАДО КРАСИТЬ ДЕРЕВО
 
         current_depth -= 1
         slice_tree = list(filter(lambda x: tree.level(x.identifier) == current_depth, tree.all_nodes()))
     tree.show()
+    copy_tree.to_graphviz("result_tree.gv")
+    Source.from_file("result_tree.gv").render(cleanup=True, format=format, view=True)
+    return tree
 
 
 def create_tree():
@@ -72,14 +78,10 @@ if __name__ == '__main__':
     # tree = Tree()
     my_tree = create_tree()
     my_tree.show(key=False, idhidden=False)
-
-    filename = "init_tree.gv"
-    my_tree.to_graphviz(filename)
-    Source.from_file(filename).render(cleanup=True, format='png', view=True)
+    my_tree.to_graphviz("init_tree.gv")
+    Source.from_file("init_tree.gv").render(cleanup=True, format=format, view=True)
 
     find_path(my_tree)
-    filename = "result_tree.gv"
+    filename = "truncated_tree.gv"
     my_tree.to_graphviz(filename)
-    Source.from_file(filename).render(cleanup=True, format='png', view=True)
-    # filename = "tmp.gv"
-    # a = my_tree.to_graphviz(filename)
+    Source.from_file("truncated_tree.gv").render(cleanup=True, format=format, view=True)
