@@ -4,7 +4,7 @@ import random
 import graphviz
 from graphviz import Source
 
-DEPTH = 5
+DEPTH = 4
 num = 0
 format = 'pdf'
 
@@ -17,11 +17,15 @@ def create_subtree(current_depth, i):
     else:
         tree.create_node("A : " + str(i), parent)
 
-    if (current_depth == DEPTH):
+    if (current_depth == DEPTH or random.random() > 0.7):
         random_data = [(random.randint(-10, 10), random.randint(-10, 10)) for i in range(3)]
+        children = random.random()
         tree.create_node(random_data[0], 3 * i + 1, parent, data=[random_data[0]])
-        tree.create_node(random_data[1], 3 * i + 2, parent, data=[random_data[1]])
-        tree.create_node(random_data[2], 3 * i + 3, parent, data=[random_data[2]])
+        if children > 0.3:
+            tree.create_node(random_data[1], 3 * i + 2, parent, data=[random_data[1]])
+        if children > 0.7:
+            tree.create_node(random_data[2], 3 * i + 3, parent, data=[random_data[2]])
+
         return tree
 
     tree.paste(parent, create_subtree(current_depth + 1, i * 3 + 1))
@@ -43,8 +47,10 @@ def find_path(tree: Tree):
             gamer = 0  # A
 
         for v in slice_tree:
-            children = tree.children(v.identifier)
+            if v.is_leaf():
+                continue
 
+            children = tree.children(v.identifier)
             max_win = numpy.max(
                 [numpy.max([child.data[0][gamer] for i in range(len(child.data[0]))]) for child in children])
 
