@@ -1,6 +1,5 @@
 import math
 import numpy as np
-import pandas as pd
 import random
 import plotly.graph_objs as go
 
@@ -65,7 +64,6 @@ class Conus:
         self.side_X = R * A * np.cos(V)
         self.side_Y = R * B * np.sin(V)
         self.side_Z = R
-        # self.fig.add_scatter3d(x=self.side_X, y=self.side_Y, z=self.side_Z)
 
     def draw_sphere(self):
         self.X = np.concatenate([self.X, self.side_X])
@@ -124,10 +122,10 @@ class Conus:
         return False
 
 
-a, b, c, e = 2, 2, 3, 0.4
+a, b, c, e = 2, 2, 3, 0.2
 A = Conus(a, b, c, e)
 
-A.distribution_points(30)
+A.distribution_points(40)
 A.draw_sphere()
 A.set_random_point(False)
 
